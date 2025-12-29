@@ -167,13 +167,20 @@
                         </div>
 
                         <!-- Selector de Fechas (Next 7 days) -->
-                        <div class="space-y-4">
+                        <div class="space-y-6">
                             <div id="dates-container" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
                                 <!-- Cards generadas por JS -->
                             </div>
-                            <button onclick="loadNextSet()" class="w-full py-4 text-[10px] font-black text-slate-400 hover:text-emerald-600 border border-dashed border-slate-200 hover:border-emerald-200 rounded-2xl transition-all uppercase tracking-[0.2em] flex items-center justify-center gap-2">
-                                <i data-lucide="search" class="w-3 h-3"></i> Buscar en otros horarios
-                            </button>
+                            
+                            <!-- Navegación de Fechas -->
+                            <div class="flex flex-col sm:flex-row gap-3">
+                                <button id="btn-prev-set" onclick="loadPreviousSet()" class="hidden flex-1 py-4 text-[10px] font-black text-slate-400 hover:text-slate-800 border border-dashed border-slate-200 hover:border-slate-400 rounded-2xl transition-all uppercase tracking-[0.2em] flex items-center justify-center gap-2">
+                                    <i data-lucide="arrow-left" class="w-3 h-3"></i> Fechas anteriores
+                                </button>
+                                <button id="btn-next-set" onclick="loadNextSet()" class="flex-1 py-4 text-[10px] font-black text-slate-400 hover:text-emerald-600 border border-dashed border-slate-200 hover:border-emerald-200 rounded-2xl transition-all uppercase tracking-[0.2em] flex items-center justify-center gap-2">
+                                    <i data-lucide="search" class="w-3 h-3"></i> Buscar en otros horarios
+                                </button>
+                            </div>
                         </div>
 
                         <!-- Selector de Horarios -->
@@ -265,17 +272,15 @@
             document.getElementById('user-timezone').innerText = tz.split('/').pop().replace('_', ' ');
         }
 
-        // Genera una lista plana de los próximos días disponibles (excluyendo sábados)
         function generateAvailability() {
             const today = new Date();
             let checkDate = new Date(today);
             let count = 0;
-            const maxDaysToGenerate = 60; // Buscar hasta en los próximos 2 meses
+            const maxDaysToGenerate = 90; 
 
             availableDates = [];
             while (availableDates.length < 28 && count < maxDaysToGenerate) {
                 const dayOfWeek = checkDate.getDay();
-                // Domingo (0) a Viernes (5) -> Solo Sábado (6) queda fuera
                 if (dayOfWeek !== 6) {
                     availableDates.push(new Date(checkDate));
                 }
@@ -288,13 +293,10 @@
             const container = document.getElementById('dates-container');
             container.innerHTML = '';
             
-            // Mostrar bloque de 7 días basado en el offset
             const slice = availableDates.slice(dateOffset, dateOffset + 7);
 
             slice.forEach(d => {
                 const card = document.createElement('button');
-                const isToday = d.toDateString() === new Date().toDateString();
-                
                 card.className = `date-card p-4 rounded-2xl flex flex-col items-center justify-center gap-1 bg-white/40`;
                 if (selectedDate && d.toDateString() === selectedDate.toDateString()) {
                     card.classList.add('selected');
@@ -309,13 +311,39 @@
                 card.onclick = () => selectDate(d, card);
                 container.appendChild(card);
             });
+
+            // Control de visibilidad de botones de navegación
+            const btnPrev = document.getElementById('btn-prev-set');
+            if (dateOffset > 0) {
+                btnPrev.classList.remove('hidden');
+            } else {
+                btnPrev.classList.add('hidden');
+            }
+
+            const btnNext = document.getElementById('btn-next-set');
+            if (dateOffset + 7 < availableDates.length) {
+                btnNext.classList.remove('hidden');
+            } else {
+                btnNext.classList.add('hidden');
+            }
+
             lucide.createIcons();
         }
 
         function loadNextSet() {
-            dateOffset = (dateOffset + 7) % availableDates.length;
-            renderDateCards();
-            document.getElementById('time-selection').classList.add('hidden');
+            if (dateOffset + 7 < availableDates.length) {
+                dateOffset += 7;
+                renderDateCards();
+                document.getElementById('time-selection').classList.add('hidden');
+            }
+        }
+
+        function loadPreviousSet() {
+            if (dateOffset >= 7) {
+                dateOffset -= 7;
+                renderDateCards();
+                document.getElementById('time-selection').classList.add('hidden');
+            }
         }
 
         function selectDate(date, element) {
@@ -327,7 +355,6 @@
             document.getElementById('time-selection').classList.remove('hidden');
             renderTimeSlots();
             
-            // Scroll suave
             document.getElementById('time-selection').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
@@ -365,7 +392,6 @@
             btn.disabled = true;
             btn.innerHTML = `<span class="loading-dots">Procesando</span>`;
 
-            // Simulación de envío al Webhook o CRM
             setTimeout(() => {
                 document.getElementById('step-2').classList.add('hidden');
                 document.getElementById('step-success').classList.remove('hidden');
