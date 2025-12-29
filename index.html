@@ -22,384 +22,215 @@
                 radial-gradient(at 0% 0%, rgba(226, 232, 240, 0.4) 0px, transparent 50%),
                 radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.03) 0px, transparent 50%);
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
+        /* Estética Mercury Glassmorphism */
         .mercury-glass {
             background: var(--glass-bg);
-            backdrop-filter: blur(25px) saturate(180%);
-            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
             border: 1px solid rgba(255, 255, 255, 0.8);
             box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.05);
         }
 
-        .date-card {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid rgba(226, 232, 240, 0.6);
-        }
-
-        .date-card:hover {
-            background: white;
-            transform: translateY(-4px);
-            border-color: var(--emerald-primary);
-            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.1);
-        }
-
-        .date-card.selected {
-            background: #0f172a !important;
-            color: white !important;
-            border-color: #0f172a;
-            box-shadow: 0 15px 30px -10px rgba(15, 23, 42, 0.3);
-        }
-
-        .time-slot {
-            transition: all 0.2s ease;
-            border: 1px solid rgba(226, 232, 240, 0.8);
-        }
-
-        .time-slot:hover:not(.selected) {
-            border-color: var(--emerald-primary);
-            background: rgba(16, 185, 129, 0.05);
-            color: var(--emerald-primary);
-        }
-
-        .time-slot.selected {
-            background: var(--emerald-primary);
-            color: white;
-            border-color: var(--emerald-primary);
-            box-shadow: 0 8px 16px -4px rgba(16, 185, 129, 0.4);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 30px -8px rgba(16, 185, 129, 0.3);
-        }
-
+        /* Destellos plateados redondos */
         .light-flare {
             position: fixed;
-            width: 400px;
-            height: 400px;
+            width: 500px;
+            height: 500px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(226, 232, 240, 0.2) 70%, transparent 100%);
+            background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(226, 232, 240, 0.3) 60%, transparent 100%);
             z-index: -1;
-            filter: blur(50px);
+            filter: blur(60px);
             pointer-events: none;
         }
 
-        .loading-dots:after {
-            content: '.';
-            animation: dots 1.5s steps(5, end) infinite;
+        /* Ajustes específicos para el embed de Cal.com */
+        #my-cal-inline-30min {
+            width: 100%;
+            height: 700px; /* Altura optimizada para vista mensual */
+            border-radius: 2rem;
+            overflow: hidden;
         }
 
-        @keyframes dots {
-            0%, 20% { content: '.'; }
-            40% { content: '..'; }
-            60% { content: '...'; }
-            80%, 100% { content: ''; }
+        /* Ocultar scrollbar pero mantener funcionalidad */
+        #my-cal-inline-30min::-webkit-scrollbar {
+            display: none;
+        }
+
+        .instruction-card {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .instruction-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .brand-text {
+            background: linear-gradient(135deg, #0f172a 0%, #475569 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
     </style>
 </head>
 <body class="p-4 md:p-8">
 
-    <div class="light-flare" style="top: -100px; left: -100px;"></div>
-    <div class="light-flare" style="bottom: -100px; right: -100px;"></div>
+    <!-- Iluminación de fondo Mercury -->
+    <div class="light-flare" style="top: -150px; left: -150px;"></div>
+    <div class="light-flare" style="bottom: -150px; right: -150px; background: radial-gradient(circle, rgba(16,185,129,0.03) 0%, transparent 70%);"></div>
 
-    <div class="max-w-6xl mx-auto">
+    <div class="max-w-7xl mx-auto">
         
-        <!-- Header -->
-        <header class="text-center mb-12 animate-in fade-in duration-1000">
-            <h1 class="text-3xl md:text-4xl font-black tracking-tighter text-slate-900 uppercase mb-2">Oly Systems</h1>
-            <p class="text-[10px] font-bold text-emerald-600 uppercase tracking-[0.4em] mb-8">Protocolo de Alta Eficiencia</p>
+        <!-- Header Big Tech -->
+        <header class="text-center mb-16 animate-in fade-in duration-1000">
+            <h1 class="text-4xl md:text-5xl font-extrabold tracking-tighter brand-text uppercase mb-3">Oly Systems</h1>
+            <p class="text-[10px] font-black text-emerald-600 uppercase tracking-[0.5em] mb-10">Infraestructura de Agendamiento Inteligente</p>
             
-            <div class="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-white/50 border border-white shadow-sm backdrop-blur-md">
-                <i data-lucide="globe" class="w-4 h-4 text-slate-400"></i>
-                <span id="user-timezone" class="text-xs font-bold text-slate-600 uppercase tracking-widest leading-none">Detectando Zona Horaria...</span>
+            <div class="inline-flex items-center gap-4 px-6 py-2.5 rounded-full bg-white/40 border border-white/60 shadow-sm backdrop-blur-xl">
+                <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                <span id="timezone-display" class="text-[11px] font-bold text-slate-500 uppercase tracking-widest leading-none">Detectando Conexión Global...</span>
             </div>
         </header>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
             
-            <!-- Instrucciones Lateral -->
-            <div class="lg:col-span-4 space-y-6 animate-in fade-in slide-in-from-left-4 duration-1000 delay-200">
-                <div class="mercury-glass p-8 rounded-[2.5rem]">
-                    <h2 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-3">
-                        <i data-lucide="calendar-range" class="w-5 h-5 text-emerald-500"></i> Agendamiento
+            <!-- PANEL IZQUIERDO: INSTRUCCIONES Y VALOR -->
+            <aside class="lg:col-span-4 space-y-8 animate-in fade-in slide-in-from-left-8 duration-1000 delay-200">
+                
+                <div class="mercury-glass p-10 rounded-[3rem] instruction-card">
+                    <h2 class="text-2xl font-black text-slate-800 mb-8 tracking-tighter flex items-center gap-3">
+                        <i data-lucide="calendar-days" class="w-6 h-6 text-emerald-500"></i> Protocolo de Reserva
                     </h2>
-                    <div class="space-y-6">
-                        <div class="flex gap-4">
-                            <div class="w-6 h-6 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-black shrink-0 text-[10px]">1</div>
-                            <p class="text-xs text-slate-500 font-semibold leading-relaxed">Selecciona uno de los días disponibles.</p>
-                        </div>
-                        <div class="flex gap-4">
-                            <div class="w-6 h-6 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-black shrink-0 text-[10px]">2</div>
-                            <p class="text-xs text-slate-500 font-semibold leading-relaxed">Define el horario para tu sesión de 30 min.</p>
-                        </div>
-                        <div class="flex gap-4">
-                            <div class="w-6 h-6 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-black shrink-0 text-[10px]">3</div>
-                            <p class="text-xs text-slate-500 font-semibold leading-relaxed">Confirma tus datos para recibir el acceso.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-slate-900 p-8 rounded-[2.5rem] text-white relative overflow-hidden">
-                    <p class="text-[11px] font-medium italic opacity-70 leading-relaxed mb-4">
-                        "Solo mostramos espacios de alta prioridad para optimizar tu tiempo y el nuestro."
-                    </p>
-                    <div class="flex items-center gap-2 text-emerald-400 font-bold text-[10px] uppercase tracking-widest">
-                        <i data-lucide="video" class="w-4 h-4"></i> Videollamada 1 a 1
-                    </div>
-                </div>
-            </div>
-
-            <!-- Selección Dinámica -->
-            <div class="lg:col-span-8 space-y-8 animate-in fade-in slide-in-from-right-4 duration-1000 delay-300">
-                <div class="mercury-glass p-8 md:p-10 rounded-[3rem]">
                     
-                    <!-- Paso 1: Fechas y Horas -->
-                    <div id="step-1" class="space-y-10">
-                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                            <h3 class="text-2xl font-black text-slate-800 tracking-tighter">Espacios Disponibles</h3>
-                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Domingo a Viernes | 11:00 - 16:00</p>
-                        </div>
-
-                        <!-- Selector de Fechas (Next 7 days) -->
-                        <div class="space-y-6">
-                            <div id="dates-container" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
-                                <!-- Cards generadas por JS -->
-                            </div>
-                            
-                            <!-- Navegación de Fechas -->
-                            <div class="flex flex-col sm:flex-row gap-3">
-                                <button id="btn-prev-set" onclick="loadPreviousSet()" class="hidden flex-1 py-4 text-[10px] font-black text-slate-400 hover:text-slate-800 border border-dashed border-slate-200 hover:border-slate-400 rounded-2xl transition-all uppercase tracking-[0.2em] flex items-center justify-center gap-2">
-                                    <i data-lucide="arrow-left" class="w-3 h-3"></i> Fechas anteriores
-                                </button>
-                                <button id="btn-next-set" onclick="loadNextSet()" class="flex-1 py-4 text-[10px] font-black text-slate-400 hover:text-emerald-600 border border-dashed border-slate-200 hover:border-emerald-200 rounded-2xl transition-all uppercase tracking-[0.2em] flex items-center justify-center gap-2">
-                                    <i data-lucide="search" class="w-3 h-3"></i> Buscar en otros horarios
-                                </button>
+                    <nav class="space-y-10">
+                        <div class="flex gap-5">
+                            <div class="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-black shrink-0 text-sm shadow-sm">1</div>
+                            <div>
+                                <p class="text-sm text-slate-800 font-bold mb-1">Selecciona el día</p>
+                                <p class="text-xs text-slate-400 font-medium leading-relaxed italic">Disponibilidad de Domingo a Viernes.</p>
                             </div>
                         </div>
+                        <div class="flex gap-5">
+                            <div class="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-black shrink-0 text-sm shadow-sm">2</div>
+                            <div>
+                                <p class="text-sm text-slate-800 font-bold mb-1">Elige tu horario</p>
+                                <p class="text-xs text-slate-400 font-medium leading-relaxed italic">Franjas de 11:00 AM a 4:00 PM ajustadas a tu hora local.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-5">
+                            <div class="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-black shrink-0 text-sm shadow-sm">3</div>
+                            <div>
+                                <p class="text-sm text-slate-800 font-bold mb-1">Confirma por WhatsApp</p>
+                                <p class="text-xs text-slate-400 font-medium leading-relaxed italic">Necesitaremos tu nombre, email y número para enviarte el enlace de acceso.</p>
+                            </div>
+                        </div>
+                    </nav>
+                </div>
 
-                        <!-- Selector de Horarios -->
-                        <div id="time-selection" class="pt-10 border-t border-slate-100 hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
-                            <div class="flex items-center gap-3 mb-6">
-                                <span class="w-8 h-[1px] bg-slate-200"></span>
-                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Horarios para el <span id="selected-date-display" class="text-emerald-600">--</span></p>
+                <!-- Info Card Premium -->
+                <div class="bg-slate-900 p-10 rounded-[3rem] text-white relative overflow-hidden group shadow-2xl">
+                    <div class="relative z-10">
+                        <p class="text-[13px] font-medium italic opacity-80 leading-relaxed mb-6">
+                            "Analizaremos tu arquitectura de mensajes actual para proyectar el ahorro operativo en tu moneda local."
+                        </p>
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 bg-emerald-500 rounded-xl">
+                                <i data-lucide="video" class="w-5 h-5 text-white"></i>
                             </div>
-                            <div id="slots-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                                <!-- Slots generados por JS -->
-                            </div>
+                            <span class="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400">Auditoría 1 a 1 | 30 Minutos</span>
                         </div>
                     </div>
+                    <div class="absolute -right-6 -bottom-6 w-32 h-32 bg-white/5 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-1000"></div>
+                </div>
 
-                    <!-- Paso 2: Datos de Usuario -->
-                    <div id="step-2" class="hidden space-y-8 py-4 animate-in fade-in duration-500">
-                        <button onclick="resetToStep1()" class="flex items-center gap-2 text-[10px] font-black text-slate-400 hover:text-slate-800 transition-all uppercase tracking-widest group">
-                            <i data-lucide="arrow-left" class="w-3 h-3 group-hover:-translate-x-1 transition-transform"></i> Volver a fechas
-                        </button>
-                        
-                        <div class="space-y-2">
-                            <h3 class="text-3xl font-black text-slate-900 tracking-tighter">Datos de Confirmación</h3>
-                            <p class="text-xs text-slate-500 font-medium">Sesión programada: <span id="final-summary" class="text-emerald-600 font-bold">--</span></p>
+            </aside>
+
+            <!-- PANEL DERECHO: EMBED DE CAL.COM -->
+            <main class="lg:col-span-8 animate-in fade-in slide-in-from-right-8 duration-1000 delay-300">
+                <div class="mercury-glass p-1 rounded-[3.5rem] relative overflow-hidden shadow-2xl shadow-slate-200">
+                    
+                    <!-- Barra de Control Estética (Simulación Apple) -->
+                    <div class="px-10 pt-8 pb-4 flex justify-between items-center">
+                        <div class="flex gap-2">
+                            <div class="w-3 h-3 rounded-full bg-slate-200"></div>
+                            <div class="w-3 h-3 rounded-full bg-slate-200"></div>
+                            <div class="w-3 h-3 rounded-full bg-slate-200"></div>
                         </div>
-
-                        <form id="booking-form" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="space-y-2">
-                                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nombre del Dueño/Director</label>
-                                <input type="text" required id="user-name" placeholder="Tu nombre" class="w-full p-4 bg-white border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all font-bold text-slate-700">
-                            </div>
-                            <div class="space-y-2">
-                                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Email Corporativo</label>
-                                <input type="email" required id="user-email" placeholder="correo@negocio.com" class="w-full p-4 bg-white border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all font-bold text-slate-700">
-                            </div>
-                            <div class="md:col-span-2 space-y-2">
-                                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">WhatsApp Directo</label>
-                                <input type="tel" required id="user-phone" placeholder="+52 1..." class="w-full p-4 bg-white border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all font-bold text-slate-700">
-                            </div>
-
-                            <button type="submit" class="md:col-span-2 py-5 btn-primary rounded-2xl text-white font-black text-lg flex items-center justify-center gap-3 shadow-lg">
-                                CONFIRMAR MI ESPACIO
-                                <i data-lucide="check" class="w-5 h-5"></i>
-                            </button>
-                        </form>
+                        <p class="text-[9px] font-black text-slate-300 uppercase tracking-[0.3em]">Calendario Oficial Oly Systems</p>
                     </div>
 
-                    <!-- Éxito -->
-                    <div id="step-success" class="hidden text-center py-16 space-y-8 animate-in zoom-in-95 duration-700">
-                        <div class="relative inline-block">
-                            <div class="absolute inset-0 bg-emerald-400 blur-3xl opacity-20 rounded-full animate-pulse"></div>
-                            <div class="relative w-20 h-20 bg-emerald-500 text-white rounded-3xl flex items-center justify-center mx-auto shadow-2xl">
-                                <i data-lucide="calendar-check" class="w-10 h-10"></i>
-                            </div>
-                        </div>
-                        <div class="space-y-2">
-                            <h3 class="text-4xl font-black text-slate-900 tracking-tighter">Auditoría Agendada</h3>
-                            <p class="text-sm text-slate-500 font-medium max-w-xs mx-auto">Revisa tu WhatsApp. Te hemos enviado el enlace de acceso y los preparativos.</p>
-                        </div>
-                        <button onclick="location.reload()" class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] hover:text-emerald-600 transition-colors">Volver al inicio</button>
+                    <!-- Cal inline embed container -->
+                    <div id="my-cal-inline-30min" class="p-4">
+                        <!-- El script de Cal inyectará el contenido aquí -->
                     </div>
 
                 </div>
-            </div>
+            </main>
+
         </div>
 
-        <footer class="mt-20 text-center text-[10px] text-slate-300 font-black uppercase tracking-[0.5em] pb-10">
-            Oly Systems © 2024 / Conectividad Empresarial Inteligente
+        <footer class="mt-24 text-center pb-12">
+            <p class="text-[10px] text-slate-300 font-black uppercase tracking-[0.6em]">Oly Systems © 2024 / Conectividad Empresarial Inteligente</p>
         </footer>
+
     </div>
 
-    <script>
-        const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
-        const dayNames = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
-        
-        let availableDates = [];
-        let dateOffset = 0;
-        let selectedDate = null;
-        let selectedTime = null;
+    <!-- CAL.COM INTEGRATION SCRIPT -->
+    <script type="text/javascript">
+        (function (C, A, L) { 
+            let p = function (a, ar) { a.q.push(ar); }; 
+            let d = C.document; 
+            C.Cal = C.Cal || function () { 
+                let cal = C.Cal; 
+                let ar = arguments; 
+                if (!cal.loaded) { 
+                    cal.ns = {}; 
+                    cal.q = cal.q || []; 
+                    d.head.appendChild(d.createElement("script")).src = A; 
+                    cal.loaded = true; 
+                } 
+                if (ar[0] === L) { 
+                    const api = function () { p(api, arguments); }; 
+                    const namespace = ar[1]; 
+                    api.q = api.q || []; 
+                    if(typeof namespace === "string"){
+                        cal.ns[namespace] = cal.ns[namespace] || api;
+                        p(cal.ns[namespace], ar);
+                        p(cal, ["initNamespace", namespace]);
+                    } else p(cal, ar); 
+                    return;
+                } 
+                p(cal, ar); 
+            }; 
+        })(window, "https://app.cal.com/embed/embed.js", "init");
 
-        function init() {
+        // Inicialización de la namespace 30min
+        Cal("init", "30min", {origin:"https://app.cal.com"});
+
+        // Renderizado Inline en el contenedor mercury
+        Cal.ns["30min"]("inline", {
+            elementOrSelector: "#my-cal-inline-30min",
+            config: {
+                layout: "month_view",
+                theme: "light" // Manteniendo el estilo Apple/Google blanco
+            },
+            calLink: "agencia-automatizacion-rbpylb/30min",
+        });
+
+        // UI Config
+        Cal.ns["30min"]("ui", {
+            hideEventTypeDetails: false,
+            layout: "month_view"
+        });
+
+        // Inicializar Iconos Lucide
+        window.onload = () => {
             lucide.createIcons();
-            detectTimezone();
-            generateAvailability();
-            renderDateCards();
-        }
-
-        function detectTimezone() {
             const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            document.getElementById('user-timezone').innerText = tz.split('/').pop().replace('_', ' ');
-        }
-
-        function generateAvailability() {
-            const today = new Date();
-            let checkDate = new Date(today);
-            let count = 0;
-            const maxDaysToGenerate = 90; 
-
-            availableDates = [];
-            while (availableDates.length < 28 && count < maxDaysToGenerate) {
-                const dayOfWeek = checkDate.getDay();
-                if (dayOfWeek !== 6) {
-                    availableDates.push(new Date(checkDate));
-                }
-                checkDate.setDate(checkDate.getDate() + 1);
-                count++;
-            }
-        }
-
-        function renderDateCards() {
-            const container = document.getElementById('dates-container');
-            container.innerHTML = '';
-            
-            const slice = availableDates.slice(dateOffset, dateOffset + 7);
-
-            slice.forEach(d => {
-                const card = document.createElement('button');
-                card.className = `date-card p-4 rounded-2xl flex flex-col items-center justify-center gap-1 bg-white/40`;
-                if (selectedDate && d.toDateString() === selectedDate.toDateString()) {
-                    card.classList.add('selected');
-                }
-
-                card.innerHTML = `
-                    <span class="text-[9px] font-black uppercase tracking-widest ${selectedDate && d.toDateString() === selectedDate.toDateString() ? 'text-emerald-400' : 'text-slate-400'}">${dayNames[d.getDay()]}</span>
-                    <span class="text-xl font-black">${d.getDate()}</span>
-                    <span class="text-[8px] font-bold uppercase opacity-60">${months[d.getMonth()].substring(0,3)}</span>
-                `;
-
-                card.onclick = () => selectDate(d, card);
-                container.appendChild(card);
-            });
-
-            // Control de visibilidad de botones de navegación
-            const btnPrev = document.getElementById('btn-prev-set');
-            if (dateOffset > 0) {
-                btnPrev.classList.remove('hidden');
-            } else {
-                btnPrev.classList.add('hidden');
-            }
-
-            const btnNext = document.getElementById('btn-next-set');
-            if (dateOffset + 7 < availableDates.length) {
-                btnNext.classList.remove('hidden');
-            } else {
-                btnNext.classList.add('hidden');
-            }
-
-            lucide.createIcons();
-        }
-
-        function loadNextSet() {
-            if (dateOffset + 7 < availableDates.length) {
-                dateOffset += 7;
-                renderDateCards();
-                document.getElementById('time-selection').classList.add('hidden');
-            }
-        }
-
-        function loadPreviousSet() {
-            if (dateOffset >= 7) {
-                dateOffset -= 7;
-                renderDateCards();
-                document.getElementById('time-selection').classList.add('hidden');
-            }
-        }
-
-        function selectDate(date, element) {
-            selectedDate = date;
-            document.querySelectorAll('.date-card').forEach(c => c.classList.remove('selected'));
-            element.classList.add('selected');
-
-            document.getElementById('selected-date-display').innerText = `${date.getDate()} de ${months[date.getMonth()]}`;
-            document.getElementById('time-selection').classList.remove('hidden');
-            renderTimeSlots();
-            
-            document.getElementById('time-selection').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
-
-        function renderTimeSlots() {
-            const grid = document.getElementById('slots-grid');
-            grid.innerHTML = '';
-            const times = ["11:00 AM", "11:30 AM", "12:00 PM", "12:30 PM", "01:00 PM", "01:30 PM", "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM", "04:00 PM"];
-
-            times.forEach(t => {
-                const btn = document.createElement('button');
-                btn.innerText = t;
-                btn.className = `time-slot p-3 rounded-xl font-bold text-xs text-slate-500 bg-white/50`;
-                btn.onclick = () => confirmTime(t);
-                grid.appendChild(btn);
-            });
-        }
-
-        function confirmTime(time) {
-            selectedTime = time;
-            document.getElementById('step-1').classList.add('hidden');
-            document.getElementById('step-2').classList.remove('hidden');
-            
-            document.getElementById('final-summary').innerText = 
-                `${selectedDate.getDate()} de ${months[selectedDate.getMonth()]} a las ${selectedTime}`;
-        }
-
-        function resetToStep1() {
-            document.getElementById('step-2').classList.add('hidden');
-            document.getElementById('step-1').classList.remove('hidden');
-        }
-
-        document.getElementById('booking-form').onsubmit = (e) => {
-            e.preventDefault();
-            const btn = e.target.querySelector('button');
-            btn.disabled = true;
-            btn.innerHTML = `<span class="loading-dots">Procesando</span>`;
-
-            setTimeout(() => {
-                document.getElementById('step-2').classList.add('hidden');
-                document.getElementById('step-success').classList.remove('hidden');
-                lucide.createIcons();
-            }, 2000);
+            document.getElementById('timezone-display').innerText = `Zona Horaria: ${tz.replace('_', ' ')}`;
         };
-
-        window.onload = init;
     </script>
 </body>
 </html>
