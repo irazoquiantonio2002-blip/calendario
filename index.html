@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendar Auditoría | Oly Systems</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        
+        :root {
+            --emerald-primary: #10b981;
+            --mercury-silver: #e2e8f0;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+        }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #f8fafc;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(226, 232, 240, 0.4) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.03) 0px, transparent 50%);
+            min-height: 100vh;
+        }
+
+        .mercury-glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.05);
+        }
+
+        .date-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(226, 232, 240, 0.6);
+        }
+
+        .date-card:hover {
+            background: white;
+            transform: translateY(-4px);
+            border-color: var(--emerald-primary);
+            box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.1);
+        }
+
+        .date-card.selected {
+            background: #0f172a !important;
+            color: white !important;
+            border-color: #0f172a;
+            box-shadow: 0 15px 30px -10px rgba(15, 23, 42, 0.3);
+        }
+
+        .time-slot {
+            transition: all 0.2s ease;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .time-slot:hover:not(.selected) {
+            border-color: var(--emerald-primary);
+            background: rgba(16, 185, 129, 0.05);
+            color: var(--emerald-primary);
+        }
+
+        .time-slot.selected {
+            background: var(--emerald-primary);
+            color: white;
+            border-color: var(--emerald-primary);
+            box-shadow: 0 8px 16px -4px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #064e3b 0%, #065f46 100%);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -8px rgba(16, 185, 129, 0.3);
+        }
+
+        .light-flare {
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(226, 232, 240, 0.2) 70%, transparent 100%);
+            z-index: -1;
+            filter: blur(50px);
+            pointer-events: none;
+        }
+
+        .loading-dots:after {
+            content: '.';
+            animation: dots 1.5s steps(5, end) infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60% { content: '...'; }
+            80%, 100% { content: ''; }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="light-flare" style="top: -100px; left: -100px;"></div>
+    <div class="light-flare" style="bottom: -100px; right: -100px;"></div>
+
+    <div class="max-w-6xl mx-auto">
+        
+        <!-- Header -->
+        <header class="text-center mb-12 animate-in fade-in duration-1000">
+            <h1 class="text-3xl md:text-4xl font-black tracking-tighter text-slate-900 uppercase mb-2">Oly Systems</h1>
+            <p class="text-[10px] font-bold text-emerald-600 uppercase tracking-[0.4em] mb-8">Protocolo de Alta Eficiencia</p>
+            
+            <div class="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-white/50 border border-white shadow-sm backdrop-blur-md">
+                <i data-lucide="globe" class="w-4 h-4 text-slate-400"></i>
+                <span id="user-timezone" class="text-xs font-bold text-slate-600 uppercase tracking-widest leading-none">Detectando Zona Horaria...</span>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            
+            <!-- Instrucciones Lateral -->
+            <div class="lg:col-span-4 space-y-6 animate-in fade-in slide-in-from-left-4 duration-1000 delay-200">
+                <div class="mercury-glass p-8 rounded-[2.5rem]">
+                    <h2 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-3">
+                        <i data-lucide="calendar-range" class="w-5 h-5 text-emerald-500"></i> Agendamiento
+                    </h2>
+                    <div class="space-y-6">
+                        <div class="flex gap-4">
+                            <div class="w-6 h-6 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-black shrink-0 text-[10px]">1</div>
+                            <p class="text-xs text-slate-500 font-semibold leading-relaxed">Selecciona uno de los días disponibles.</p>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="w-6 h-6 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-black shrink-0 text-[10px]">2</div>
+                            <p class="text-xs text-slate-500 font-semibold leading-relaxed">Define el horario para tu sesión de 30 min.</p>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="w-6 h-6 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-black shrink-0 text-[10px]">3</div>
+                            <p class="text-xs text-slate-500 font-semibold leading-relaxed">Confirma tus datos para recibir el acceso.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900 p-8 rounded-[2.5rem] text-white relative overflow-hidden">
+                    <p class="text-[11px] font-medium italic opacity-70 leading-relaxed mb-4">
+                        "Solo mostramos espacios de alta prioridad para optimizar tu tiempo y el nuestro."
+                    </p>
+                    <div class="flex items-center gap-2 text-emerald-400 font-bold text-[10px] uppercase tracking-widest">
+                        <i data-lucide="video" class="w-4 h-4"></i> Videollamada 1 a 1
+                    </div>
+                </div>
+            </div>
+
+            <!-- Selección Dinámica -->
+            <div class="lg:col-span-8 space-y-8 animate-in fade-in slide-in-from-right-4 duration-1000 delay-300">
+                <div class="mercury-glass p-8 md:p-10 rounded-[3rem]">
+                    
+                    <!-- Paso 1: Fechas y Horas -->
+                    <div id="step-1" class="space-y-10">
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <h3 class="text-2xl font-black text-slate-800 tracking-tighter">Espacios Disponibles</h3>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Domingo a Viernes | 11:00 - 16:00</p>
+                        </div>
+
+                        <!-- Selector de Fechas (Next 7 days) -->
+                        <div class="space-y-4">
+                            <div id="dates-container" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3">
+                                <!-- Cards generadas por JS -->
+                            </div>
+                            <button onclick="loadNextSet()" class="w-full py-4 text-[10px] font-black text-slate-400 hover:text-emerald-600 border border-dashed border-slate-200 hover:border-emerald-200 rounded-2xl transition-all uppercase tracking-[0.2em] flex items-center justify-center gap-2">
+                                <i data-lucide="search" class="w-3 h-3"></i> Buscar en otros horarios
+                            </button>
+                        </div>
+
+                        <!-- Selector de Horarios -->
+                        <div id="time-selection" class="pt-10 border-t border-slate-100 hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+                            <div class="flex items-center gap-3 mb-6">
+                                <span class="w-8 h-[1px] bg-slate-200"></span>
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Horarios para el <span id="selected-date-display" class="text-emerald-600">--</span></p>
+                            </div>
+                            <div id="slots-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                                <!-- Slots generados por JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Paso 2: Datos de Usuario -->
+                    <div id="step-2" class="hidden space-y-8 py-4 animate-in fade-in duration-500">
+                        <button onclick="resetToStep1()" class="flex items-center gap-2 text-[10px] font-black text-slate-400 hover:text-slate-800 transition-all uppercase tracking-widest group">
+                            <i data-lucide="arrow-left" class="w-3 h-3 group-hover:-translate-x-1 transition-transform"></i> Volver a fechas
+                        </button>
+                        
+                        <div class="space-y-2">
+                            <h3 class="text-3xl font-black text-slate-900 tracking-tighter">Datos de Confirmación</h3>
+                            <p class="text-xs text-slate-500 font-medium">Sesión programada: <span id="final-summary" class="text-emerald-600 font-bold">--</span></p>
+                        </div>
+
+                        <form id="booking-form" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nombre del Dueño/Director</label>
+                                <input type="text" required id="user-name" placeholder="Tu nombre" class="w-full p-4 bg-white border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all font-bold text-slate-700">
+                            </div>
+                            <div class="space-y-2">
+                                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Email Corporativo</label>
+                                <input type="email" required id="user-email" placeholder="correo@negocio.com" class="w-full p-4 bg-white border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all font-bold text-slate-700">
+                            </div>
+                            <div class="md:col-span-2 space-y-2">
+                                <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest">WhatsApp Directo</label>
+                                <input type="tel" required id="user-phone" placeholder="+52 1..." class="w-full p-4 bg-white border border-slate-200 rounded-2xl focus:ring-4 focus:ring-emerald-500/5 outline-none transition-all font-bold text-slate-700">
+                            </div>
+
+                            <button type="submit" class="md:col-span-2 py-5 btn-primary rounded-2xl text-white font-black text-lg flex items-center justify-center gap-3 shadow-lg">
+                                CONFIRMAR MI ESPACIO
+                                <i data-lucide="check" class="w-5 h-5"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Éxito -->
+                    <div id="step-success" class="hidden text-center py-16 space-y-8 animate-in zoom-in-95 duration-700">
+                        <div class="relative inline-block">
+                            <div class="absolute inset-0 bg-emerald-400 blur-3xl opacity-20 rounded-full animate-pulse"></div>
+                            <div class="relative w-20 h-20 bg-emerald-500 text-white rounded-3xl flex items-center justify-center mx-auto shadow-2xl">
+                                <i data-lucide="calendar-check" class="w-10 h-10"></i>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <h3 class="text-4xl font-black text-slate-900 tracking-tighter">Auditoría Agendada</h3>
+                            <p class="text-sm text-slate-500 font-medium max-w-xs mx-auto">Revisa tu WhatsApp. Te hemos enviado el enlace de acceso y los preparativos.</p>
+                        </div>
+                        <button onclick="location.reload()" class="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] hover:text-emerald-600 transition-colors">Volver al inicio</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <footer class="mt-20 text-center text-[10px] text-slate-300 font-black uppercase tracking-[0.5em] pb-10">
+            Oly Systems © 2024 / Conectividad Empresarial Inteligente
+        </footer>
+    </div>
+
+    <script>
+        const months = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+        const dayNames = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+        
+        let availableDates = [];
+        let dateOffset = 0;
+        let selectedDate = null;
+        let selectedTime = null;
+
+        function init() {
+            lucide.createIcons();
+            detectTimezone();
+            generateAvailability();
+            renderDateCards();
+        }
+
+        function detectTimezone() {
+            const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            document.getElementById('user-timezone').innerText = tz.split('/').pop().replace('_', ' ');
+        }
+
+        // Genera una lista plana de los próximos días disponibles (excluyendo sábados)
+        function generateAvailability() {
+            const today = new Date();
+            let checkDate = new Date(today);
+            let count = 0;
+            const maxDaysToGenerate = 60; // Buscar hasta en los próximos 2 meses
+
+            availableDates = [];
+            while (availableDates.length < 28 && count < maxDaysToGenerate) {
+                const dayOfWeek = checkDate.getDay();
+                // Domingo (0) a Viernes (5) -> Solo Sábado (6) queda fuera
+                if (dayOfWeek !== 6) {
+                    availableDates.push(new Date(checkDate));
+                }
+                checkDate.setDate(checkDate.getDate() + 1);
+                count++;
+            }
+        }
+
+        function renderDateCards() {
+            const container = document.getElementById('dates-container');
+            container.innerHTML = '';
+            
+            // Mostrar bloque de 7 días basado en el offset
+            const slice = availableDates.slice(dateOffset, dateOffset + 7);
+
+            slice.forEach(d => {
+                const card = document.createElement('button');
+                const isToday = d.toDateString() === new Date().toDateString();
+                
+                card.className = `date-card p-4 rounded-2xl flex flex-col items-center justify-center gap-1 bg-white/40`;
+                if (selectedDate && d.toDateString() === selectedDate.toDateString()) {
+                    card.classList.add('selected');
+                }
+
+                card.innerHTML = `
+                    <span class="text-[9px] font-black uppercase tracking-widest ${selectedDate && d.toDateString() === selectedDate.toDateString() ? 'text-emerald-400' : 'text-slate-400'}">${dayNames[d.getDay()]}</span>
+                    <span class="text-xl font-black">${d.getDate()}</span>
+                    <span class="text-[8px] font-bold uppercase opacity-60">${months[d.getMonth()].substring(0,3)}</span>
+                `;
+
+                card.onclick = () => selectDate(d, card);
+                container.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        function loadNextSet() {
+            dateOffset = (dateOffset + 7) % availableDates.length;
+            renderDateCards();
+            document.getElementById('time-selection').classList.add('hidden');
+        }
+
+        function selectDate(date, element) {
+            selectedDate = date;
+            document.querySelectorAll('.date-card').forEach(c => c.classList.remove('selected'));
+            element.classList.add('selected');
+
+            document.getElementById('selected-date-display').innerText = `${date.getDate()} de ${months[date.getMonth()]}`;
+            document.getElementById('time-selection').classList.remove('hidden');
+            renderTimeSlots();
+            
+            // Scroll suave
+            document.getElementById('time-selection').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function renderTimeSlots() {
+            const grid = document.getElementById('slots-grid');
+            grid.innerHTML = '';
+            const times = ["11:00 AM", "11:30 AM", "12:00 PM", "12:30 PM", "01:00 PM", "01:30 PM", "02:00 PM", "02:30 PM", "03:00 PM", "03:30 PM", "04:00 PM"];
+
+            times.forEach(t => {
+                const btn = document.createElement('button');
+                btn.innerText = t;
+                btn.className = `time-slot p-3 rounded-xl font-bold text-xs text-slate-500 bg-white/50`;
+                btn.onclick = () => confirmTime(t);
+                grid.appendChild(btn);
+            });
+        }
+
+        function confirmTime(time) {
+            selectedTime = time;
+            document.getElementById('step-1').classList.add('hidden');
+            document.getElementById('step-2').classList.remove('hidden');
+            
+            document.getElementById('final-summary').innerText = 
+                `${selectedDate.getDate()} de ${months[selectedDate.getMonth()]} a las ${selectedTime}`;
+        }
+
+        function resetToStep1() {
+            document.getElementById('step-2').classList.add('hidden');
+            document.getElementById('step-1').classList.remove('hidden');
+        }
+
+        document.getElementById('booking-form').onsubmit = (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            btn.disabled = true;
+            btn.innerHTML = `<span class="loading-dots">Procesando</span>`;
+
+            // Simulación de envío al Webhook o CRM
+            setTimeout(() => {
+                document.getElementById('step-2').classList.add('hidden');
+                document.getElementById('step-success').classList.remove('hidden');
+                lucide.createIcons();
+            }, 2000);
+        };
+
+        window.onload = init;
+    </script>
+</body>
+</html>
